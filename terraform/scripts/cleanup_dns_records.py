@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""
-Deletes the Windows Client DNS A record from Route 53.
-"""
 
 import os
 import boto3
@@ -20,6 +17,18 @@ def log(message):
     log_lines.append(message + "\n")
 
 # ---------------------------
+# Read FQDN + IP from file
+# ---------------------------
+fqdn_file = "created_fqdn.txt"
+try:
+    with open(fqdn_file, "r") as f:
+        line = f.read().strip()
+        fqdn, dc1_ip = line.split()
+except Exception as e:
+    log(f"❌ ERROR: Failed to read FQDN and IP from {fqdn_file}: {e}")
+    sys.exit(1)
+
+# ---------------------------
 # AWS credentials from env vars
 # ---------------------------
 aws_access_key_id = os.getenv("DEMO_AWS_ACCESS_KEY_ID")
@@ -28,20 +37,8 @@ region = os.getenv("DEMO_AWS_REGION", "us-east-1")
 hosted_zone_id = os.getenv("DEMO_HOSTED_ZONE_ID")
 
 if not aws_access_key_id or not aws_secret_access_key or not hosted_zone_id:
-    log("ERROR: AWS credentials or Hosted Zone ID not set")
+    log("❌ ERROR: Missing AWS credentials or Hosted Zone ID")
     sys.exit(1)
-
-# ---------------------------
-# Required env vars
-# ---------------------------
-participant_id = os.getenv("INSTRUQT_PARTICIPANT_ID")
-dc1_ip = os.getenv("DC1_IP")
-
-if not participant_id or not dc1_ip:
-    log("ERROR: INSTRUQT_PARTICIPANT_ID and DC1_IP must be set")
-    sys.exit(1)
-
-fqdn = f"{participant_id}-client.iracictechguru.com."
 
 # ---------------------------
 # Create boto3 session
@@ -51,13 +48,12 @@ session = boto3.Session(
     aws_secret_access_key=aws_secret_access_key,
     region_name=region
 )
-
 route53 = session.client("route53")
 
 # ---------------------------
 # Delete the A record
 # ---------------------------
-log(f"Deleting A record: {fqdn} -> {dc1_ip}")
+log(f"🗑️  Deleting A record: {fqdn} -> {dc1_ip}")
 try:
     response = route53.change_resource_record_sets(
         HostedZoneId=hosted_zone_id,
@@ -77,12 +73,12 @@ try:
         }
     )
     status = response['ChangeInfo']['Status']
-    log(f"Deleted: {fqdn} -> {dc1_ip}")
-    log(f"Change status: {status}")
+    log(f"✅  Deleted: {fqdn} -> {dc1_ip}")
+    log(f"📡  Change status: {status}")
 except route53.exceptions.InvalidChangeBatch as e:
-    log(f"WARNING: Record {fqdn} may not exist or already deleted: {e}")
+    log(f"⚠️  Record {fqdn} may not exist or already deleted: {e}")
 except Exception as e:
-    log(f"ERROR: Failed to delete A record {fqdn}: {e}")
+    log(f"❌ Failed to delete A record {fqdn}: {e}")
     sys.exit(1)
 
 # ---------------------------
@@ -91,4 +87,4 @@ except Exception as e:
 with open(log_file, "a") as f:
     f.writelines(log_lines)
 
-log(f"Cleanup log written to {log_file}")
+log(f"📄 Cleanup log written to {log_file}")
