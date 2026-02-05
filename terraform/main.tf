@@ -263,10 +263,10 @@ resource "aws_network_interface" "gm_mgmt" {
   tags = { Name = "gm-mgmt-nic" }
 }
 
-# --- GM LAN1 Network Interface (10.100.1.11) ---
+# --- GM LAN1 Network Interface (10.100.0.11) - must be same AZ as MGMT ---
 resource "aws_network_interface" "gm_lan1" {
-  subnet_id       = aws_subnet.public_b.id
-  private_ips     = ["10.100.1.11"]
+  subnet_id       = aws_subnet.public.id
+  private_ips     = ["10.100.0.11"]
   security_groups = [aws_security_group.rdp_sg.id]
   tags = { Name = "gm-lan1-nic" }
 }
@@ -292,9 +292,9 @@ temp_license: nios IB-V825 enterprise dns dhcp cloud
 remote_console_enabled: y
 default_admin_password: "${var.windows_admin_password}"
 lan1:
-  v4_addr: 10.100.1.11
+  v4_addr: 10.100.0.11
   v4_netmask: 255.255.255.0
-  v4_gw: 10.100.1.1
+  v4_gw: 10.100.0.1
 mgmt:
   v4_addr: 10.100.0.10
   v4_netmask: 255.255.255.0
@@ -315,7 +315,7 @@ resource "aws_eip" "gm_eip" {
 resource "aws_eip_association" "gm_eip_assoc" {
   network_interface_id = aws_network_interface.gm_lan1.id
   allocation_id        = aws_eip.gm_eip.id
-  private_ip_address   = "10.100.1.11"
+  private_ip_address   = "10.100.0.11"
 }
 
 # ===========================================================
