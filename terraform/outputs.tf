@@ -43,3 +43,10 @@ output "ssh_to_ubuntu_syslog" {
   description = "SSH command to access the Ubuntu syslog server"
   value       = "ssh -i instruqt-dc-key.pem ubuntu@${aws_eip.ubuntu_syslog_eip.public_ip}"
 }
+
+# --- Azure Outputs ---
+
+output "azure_win11_public_ip" {
+  description = "Public IP for Azure Windows 11 desktop client (RDP access)"
+  value       = azurerm_public_ip.win11.ip_address
+}
