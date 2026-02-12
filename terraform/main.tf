@@ -602,3 +602,50 @@ resource "azurerm_windows_virtual_machine" "win11" {
     version   = "latest"
   }
 }
+
+# ===========================================================
+# Azure Windows 11 Desktop Client #2
+# ===========================================================
+
+resource "azurerm_public_ip" "win11_2" {
+  name                = "win11-2-public-ip"
+  location            = azurerm_resource_group.lab.location
+  resource_group_name = azurerm_resource_group.lab.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_network_interface" "win11_2" {
+  name                = "win11-2-nic"
+  location            = azurerm_resource_group.lab.location
+  resource_group_name = azurerm_resource_group.lab.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.public.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.win11_2.id
+  }
+}
+
+resource "azurerm_windows_virtual_machine" "win11_2" {
+  name                  = "win11-client-2"
+  location              = azurerm_resource_group.lab.location
+  resource_group_name   = azurerm_resource_group.lab.name
+  size                  = var.azure_vm_size
+  admin_username        = "LabAdmin"
+  admin_password        = var.windows_admin_password
+  network_interface_ids = [azurerm_network_interface.win11_2.id]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+  }
+
+  source_image_reference {
+    publisher = "MicrosoftWindowsDesktop"
+    offer     = "windows-11"
+    sku       = "win11-24h2-pro"
+    version   = "latest"
+  }
+}

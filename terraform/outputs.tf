@@ -50,3 +50,8 @@ output "azure_win11_public_ip" {
   description = "Public IP for Azure Windows 11 desktop client (RDP access)"
   value       = azurerm_public_ip.win11.ip_address
 }
+
+output "azure_win11_2_public_ip" {
+  description = "Public IP for Azure Windows 11 desktop client #2 (RDP access)"
+  value       = azurerm_public_ip.win11_2.ip_address
+}
