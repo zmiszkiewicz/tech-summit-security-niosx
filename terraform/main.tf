@@ -296,7 +296,7 @@ resource "aws_network_interface" "gm_lan1" {
 # --- GM EC2 Instance ---
 resource "aws_instance" "gm" {
   ami           = local.gm_ami_id
-  instance_type = "m5.large"
+  instance_type = "m5.xlarge"
   key_name      = aws_key_pair.rdp.key_name
 
   network_interface {
