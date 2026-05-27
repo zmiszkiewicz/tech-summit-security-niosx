@@ -7,7 +7,7 @@ locals {
 
 resource "aws_instance" "niosx_1" {
   ami                         = local.infoblox_ami_id
-  instance_type               = "m5.2xlarge"
+  instance_type               = "m5.large"
   key_name                    = aws_key_pair.rdp.key_name
   subnet_id                   = aws_subnet.public.id
   private_ip                  = "10.100.0.200"
@@ -36,7 +36,7 @@ resource "aws_instance" "niosx_1" {
 
 resource "aws_instance" "niosx_2" {
   ami                         = local.infoblox_ami_id
-  instance_type               = "m5.2xlarge"
+  instance_type               = "m5.large"
   key_name                    = aws_key_pair.rdp.key_name
   subnet_id                   = aws_subnet.public_b.id
   private_ip                  = "10.100.1.200"

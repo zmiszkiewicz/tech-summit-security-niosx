@@ -248,7 +248,7 @@ resource "aws_eip_association" "ubuntu_assoc" {
 
 resource "aws_instance" "ubuntu_vm" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.small"
+  instance_type = "t3.nano"
   key_name      = aws_key_pair.rdp.key_name
 
   network_interface {
@@ -296,7 +296,7 @@ resource "aws_network_interface" "gm_lan1" {
 # --- GM EC2 Instance ---
 resource "aws_instance" "gm" {
   ami           = local.gm_ami_id
-  instance_type = "m5.2xlarge"
+  instance_type = "m5.large"
   key_name      = aws_key_pair.rdp.key_name
 
   network_interface {
@@ -459,7 +459,7 @@ resource "aws_eip_association" "ubuntu_syslog_assoc" {
 
 resource "aws_instance" "ubuntu_syslog_vm" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.small"
+  instance_type = "t3.nano"
   key_name      = aws_key_pair.rdp.key_name
 
   network_interface {
